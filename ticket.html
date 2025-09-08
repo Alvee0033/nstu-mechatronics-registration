@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Ticket • NSTU MC Orientation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+    <style>
+        body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+        .glass { backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)); border: 1px solid rgba(148,163,184,.18); }
+        .logo-glow { filter: drop-shadow(0 14px 36px rgba(99,102,241,.45)) drop-shadow(0 0 72px rgba(56,189,248,.36)); }
+        .bg-aurora { position: fixed; inset: 0; z-index: -1; background: radial-gradient(800px 300px at 10% -10%, rgba(147,197,253,.12), transparent 60%), radial-gradient(500px 300px at 110% 10%, rgba(244,114,182,.10), transparent 60%), radial-gradient(600px 300px at 50% 110%, rgba(196,181,253,.10), transparent 60%); }
+        .neon-cta { position: relative; isolation: isolate; overflow: hidden; border: 1px solid rgba(56,189,248,.55); background: rgba(2,6,23,.65); color: #e6fffb; border-radius: 0.75rem; padding: 0.6rem 1rem; font-weight: 600; }
+        .neon-cta:before { content: ""; position: absolute; inset: -60%; background: conic-gradient(from 0deg, rgba(56,189,248,.0), rgba(56,189,248,.45), rgba(147,197,253,.0), rgba(99,102,241,.45), rgba(56,189,248,.0)); filter: blur(36px); animation: spinGlow 6s linear infinite; z-index: -1; }
+        @keyframes spinGlow { to { transform: rotate(360deg);} }
+        /* Ticket aesthetics */
+        .ticket { position: relative; overflow: hidden; border-radius: 18px; }
+        .ticket:before { content: ""; position: absolute; inset: -1px; padding: 1px; border-radius: 20px; background: linear-gradient(135deg, rgba(196,181,253,.35), rgba(147,197,253,.25)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .ticket-header { display: flex; align-items: center; gap: .75rem; }
+        .badge { display:inline-flex; align-items:center; gap:.4rem; font-size:.75rem; padding:.2rem .5rem; border-radius:9999px; border:1px solid rgba(103,232,249,.5); background: rgba(2,6,23,.55); color:#e6fffb; box-shadow: 0 0 16px rgba(56,189,248,.35), inset 0 0 10px rgba(103,232,249,.2); }
+        .perforation { position: relative; height: 1px; margin: .9rem 0; background: linear-gradient(90deg, transparent 0, rgba(148,163,184,.4) 50%, transparent 100%); background-size: 12px 1px; background-repeat: repeat-x; }
+        .dots { position:absolute; top:50%; left:-10px; transform:translateY(-50%); height:18px; width:18px; border-radius:9999px; background: #0f172a; box-shadow: 360px 0 0 0 #0f172a; }
+        .barcode { height: 36px; background-image: repeating-linear-gradient(90deg, rgba(226,232,240,.9) 0, rgba(226,232,240,.9) 2px, transparent 2px, transparent 4px); opacity:.4; border-radius:6px; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="bg-aurora"></div>
+    <div class="max-w-xl mx-auto px-5 py-8">
+        <div class="text-center mb-4">
+            <img src="./assets/logo.png" alt="NSTU MC" class="mx-auto h-20 w-auto logo-glow">
+        </div>
+        <div class="glass ticket rounded-2xl p-6">
+            <div class="ticket-header justify-center">
+                <h1 class="text-2xl font-extrabold text-center">Registration Ticket</h1>
+                <span class="badge">NSTU MC • Orientation</span>
+            </div>
+            <p class="text-center text-slate-400 text-sm">Show this at entry</p>
+            <div class="perforation"><span class="dots"></span></div>
+            <div class="grid gap-3 text-sm">
+                <div class="flex justify-between"><span class="text-slate-400">Name</span><span id="tName" class="font-semibold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Phone</span><span id="tPhone" class="font-semibold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Session</span><span id="tSession" class="font-semibold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Department</span><span id="tDept" class="font-semibold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Student ID</span><span id="tId" class="font-semibold tracking-wider"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Venue</span><span class="font-semibold">IQAC</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Time</span><span class="font-semibold">2:00 PM</span></div>
+            </div>
+            <div class="mt-5 barcode"></div>
+            <div class="mt-6 flex items-center justify-center gap-3">
+                <button id="downloadTicket" class="neon-cta">Download PDF</button>
+                <a href="./index.html" class="neon-cta">Back to Registration</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
+    <script src="./assets/ticket.js"></script>
+</body>
+</html>
+
+

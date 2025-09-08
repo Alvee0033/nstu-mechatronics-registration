@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard • NSTU MC Orientation Sign-ups</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; }
+        body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+        .glass { position: relative; overflow: hidden; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)); border: 1px solid rgba(148,163,184,.18); }
+        .glass:before { content: ""; position: absolute; inset: -1px; padding: 1px; border-radius: 16px; background: linear-gradient(135deg, rgba(196,181,253,.35), rgba(147,197,253,.15)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .grid-bg { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0); background-size: 22px 22px; }
+        .logo-glow { filter: drop-shadow(0 0 22px rgba(129,140,248,.35)) drop-shadow(0 0 44px rgba(147,197,253,.22)); }
+        .btn-primary { box-shadow: 0 10px 30px rgba(147,197,253,.18); }
+        .btn-primary:hover { box-shadow: 0 12px 36px rgba(147,197,253,.28); }
+    </style>
+</head>
+<body class="min-h-full bg-slate-950 text-slate-100 grid-bg">
+    <div id="loginOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-sm">
+        <div class="glass rounded-2xl p-6 w-[90%] max-w-sm">
+            <div class="text-center mb-4">
+                <img src="./assets/logo.png" alt="NSTU Mechatronics Club" class="mx-auto h-16 w-auto"/>
+                <div class="mt-2 text-lg font-semibold">Dashboard Login</div>
+            </div>
+            <form id="loginForm" class="grid gap-3">
+                <div>
+                    <label for="loginUser" class="block text-sm text-slate-300 mb-1">Username</label>
+                    <input id="loginUser" type="text" class="w-full rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-2" autocomplete="username" required>
+                </div>
+                <div>
+                    <label for="loginPass" class="block text-sm text-slate-300 mb-1">Password</label>
+                    <input id="loginPass" type="password" class="w-full rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-2" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="mt-2 rounded-xl bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 px-4 py-2 text-slate-900 font-semibold hover:scale-[1.01] active:scale-[.99] transition">Sign in</button>
+                <p id="loginError" class="hidden text-rose-400 text-sm">Invalid credentials.</p>
+            </form>
+        </div>
+    </div>
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+        <div class="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl"></div>
+        <div class="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl"></div>
+    </div>
+
+    <header class="px-5 pt-6 max-w-6xl mx-auto">
+        <div class="flex items-center justify-between">
+            <a href="./index.html" class="flex items-center gap-3">
+                <img src="./assets/logo.png" alt="NSTU Mechatronics Club" class="h-20 md:h-24 w-auto logo-glow">
+                <span class="text-sm px-3 py-1 rounded-lg border border-slate-700 hover:border-slate-500 hover:bg-slate-900/50 transition-colors">← Back to Registration</span>
+            </a>
+            <div class="text-right">
+                <div class="text-slate-300 text-xs">NSTU Mechatronics Club</div>
+                <div class="text-slate-100 font-semibold">Orientation Sign-ups Dashboard</div>
+            </div>
+        </div>
+    </header>
+
+    <main id="appContent" class="px-5 pb-24 pt-8 max-w-6xl mx-auto hidden">
+        <div class="glass rounded-2xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <input id="search" type="text" placeholder="Search name, phone, ID" class="w-full md:w-64 rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-2">
+                    <select id="filterSession" class="w-full md:w-40 rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-2">
+                        <option value="">All Sessions</option>
+                        <option>2018-19</option>
+                        <option>2019-20</option>
+                        <option>2020-21</option>
+                        <option>2021-22</option>
+                        <option>2022-23</option>
+                        <option>2023-24</option>
+                        <option>2024-25</option>
+                    </select>
+                    <button id="downloadPdf" class="btn-primary rounded-xl bg-gradient-to-r from-indigo-500 via-sky-500 to-cyan-400 px-4 py-2 text-slate-900 font-semibold hover:scale-[1.01] active:scale-[.99] transition">Download PDF</button>
+                </div>
+                <div class="flex items-center gap-3 text-slate-400 text-sm">
+                    <div><span id="count">0</span> sign-up(s)</div>
+                    <div class="hidden md:inline">•</div>
+                    <div>Quota: <span id="quotaText">—</span></div>
+                    <div class="flex items-center gap-2">
+                        <label for="quotaInput" class="hidden md:inline">Set:</label>
+                        <input id="quotaInput" type="number" min="0" class="w-24 rounded-lg bg-slate-900/60 border border-slate-700 px-2 py-1" placeholder="Seats">
+                        <button id="saveQuota" class="rounded-lg border border-slate-700 px-3 py-1 hover:bg-slate-900/50 flex items-center gap-2">
+                            <span id="saveQuotaText">Save</span>
+                            <svg id="saveQuotaSpinner" class="hidden animate-spin h-4 w-4 text-slate-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4"/><path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="text-slate-300">
+                        <tr>
+                            <th class="text-left p-3">#</th>
+                            <th class="text-left p-3">Name</th>
+                            <th class="text-left p-3">Phone</th>
+                            <th class="text-left p-3">Session</th>
+                            <th class="text-left p-3">Department</th>
+                            <th class="text-left p-3">Student ID</th>
+                            <th class="text-left p-3">Time</th>
+                            <th class="text-left p-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-800"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global overlay for delete operations -->
+    <div id="dashOverlay" class="fixed inset-0 z-40 hidden items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+        <div class="rounded-xl border border-slate-700 bg-slate-900/70 px-6 py-4 text-slate-200 flex items-center gap-3">
+            <svg class="animate-spin h-5 w-5 text-slate-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="4"/><path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+            <span id="dashOverlayText">Processing...</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="./assets/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
+    <script src="./assets/dashboard.js"></script>
+</body>
+</html>
+
+
