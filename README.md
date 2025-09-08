@@ -116,8 +116,7 @@ The system validates Student IDs with the following rules:
 4. Update the configuration in `assets/firebase.js`
 
 ### Admin Access
-- **Username**: `Alvee1177`
-- **Password**: `alvee6969`
+- Contact the system administrator for dashboard access credentials
 
 ## 📈 Performance Features
 
