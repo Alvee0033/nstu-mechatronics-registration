@@ -37,9 +37,72 @@
     // Hide loading fallback when page is ready
     function hideLoadingFallback() {
         const fallback = document.getElementById('loadingFallback');
+        const content = document.querySelector('.critical-content');
+        const warning = document.getElementById('timeoutWarning');
+        
         if (fallback) {
-            setTimeout(() => fallback.classList.add('hidden'), 1000);
+            fallback.classList.add('hidden');
         }
+        if (content) {
+            content.classList.add('loaded');
+        }
+        if (warning) {
+            warning.classList.remove('show');
+        }
+        
+        // Mark as loaded globally
+        window.criticalResourcesLoaded = true;
+        console.log('Page loaded successfully');
+    }
+    
+    // Facebook link detection and optimization
+    function detectFacebookReferrer() {
+        const referrer = document.referrer.toLowerCase();
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isFacebook = referrer.includes('facebook.com') || 
+                          referrer.includes('fb.com') || 
+                          userAgent.includes('facebookexternalhit') ||
+                          userAgent.includes('facebot');
+        
+        if (isFacebook) {
+            console.log('Detected Facebook referrer, optimizing for Facebook links');
+            // Reduce timeout for Facebook users
+            setTimeout(hideLoadingFallback, 2000);
+            return true;
+        }
+        return false;
+    }
+    
+    // Enhanced resource loading with fallbacks
+    function waitForCriticalResources() {
+        const maxWait = 10000; // 10 seconds max
+        const startTime = Date.now();
+        
+        function checkResources() {
+            const elapsed = Date.now() - startTime;
+            
+            // Check if Firebase is loaded
+            const firebaseLoaded = typeof window.firebase !== 'undefined' || 
+                                 typeof window.db !== 'undefined';
+            
+            // Check if Tailwind is loaded
+            const tailwindLoaded = document.querySelector('style[data-tailwind]') || 
+                                 window.getComputedStyle(document.body).getPropertyValue('--glow');
+            
+            if (firebaseLoaded && tailwindLoaded) {
+                hideLoadingFallback();
+                return;
+            }
+            
+            if (elapsed < maxWait) {
+                setTimeout(checkResources, 500);
+            } else {
+                console.log('Timeout waiting for resources, forcing load');
+                hideLoadingFallback();
+            }
+        }
+        
+        checkResources();
     }
 
     function getThursdayLabel() {
@@ -306,9 +369,21 @@
         doc.save(`nstu_ticket_${(tId?.textContent||'').toString() || 'registration'}.pdf`);
     });
 
-    // Initialize app
+    // Initialize app with Facebook optimization
     document.addEventListener('DOMContentLoaded', function() {
-        hideLoadingFallback();
+        console.log('DOM Content Loaded');
+        
+        // Detect if coming from Facebook
+        const isFacebook = detectFacebookReferrer();
+        
+        if (isFacebook) {
+            // For Facebook links, show content immediately
+            hideLoadingFallback();
+        } else {
+            // For other sources, wait for resources
+            waitForCriticalResources();
+        }
+        
         updateSeatInfo();
         
         // Add form field validation on blur
@@ -351,8 +426,35 @@
         // DOM is still loading, event listener will handle it
     } else {
         // DOM is already loaded
-        hideLoadingFallback();
+        console.log('DOM already loaded, initializing immediately');
+        const isFacebook = detectFacebookReferrer();
+        
+        if (isFacebook) {
+            hideLoadingFallback();
+        } else {
+            waitForCriticalResources();
+        }
+        
         updateSeatInfo();
+    }
+    
+    // Additional Facebook-specific optimizations
+    if (typeof window !== 'undefined') {
+        // Handle Facebook's link preview system
+        window.addEventListener('load', function() {
+            console.log('Window loaded');
+            if (!window.criticalResourcesLoaded) {
+                setTimeout(hideLoadingFallback, 3000);
+            }
+        });
+        
+        // Handle page visibility changes (Facebook app switching)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && !window.criticalResourcesLoaded) {
+                console.log('Page became visible, checking resources');
+                setTimeout(hideLoadingFallback, 1000);
+            }
+        });
     }
 })();
 
