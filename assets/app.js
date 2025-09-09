@@ -118,12 +118,26 @@
 
     async function getDbCounts() {
         try {
+            // Wait for Firebase to be ready
+            if (!db) {
+                console.log('Firebase not ready, retrying...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if (!db) {
+                    throw new Error('Firebase not available');
+                }
+            }
+            
             const metaRef = db.doc(META_DOC);
             const metaSnap = await metaRef.get();
             const quota = metaSnap.exists && metaSnap.data().quota ? Number(metaSnap.data().quota) : 0;
             const regsSnap = await db.collection(COLLECTION).get();
             return { total: regsSnap.size, quota };
-        } catch { return { total: readRegistrationsLocal().length, quota: 0 }; }
+        } catch (error) {
+            console.log('Firebase error, using fallback:', error);
+            // Try to get from local storage as fallback
+            const localData = readRegistrationsLocal();
+            return { total: localData.length, quota: 0 };
+        }
     }
 
     // Animate number counting up
@@ -142,37 +156,86 @@
         }, 16);
     }
 
-    async function updateSeatInfo() {
-        const { total, quota } = await getDbCounts();
-        
-        // Update seat counter with animation
-        if (seatInfoTop && seatCountTop && seatTotalTop) {
-            if (quota > 0) {
-                // Show the container immediately with animation
-                seatInfoTop.classList.add('count-up');
+    async function updateSeatInfo(retryCount = 0) {
+        try {
+            const { total, quota } = await getDbCounts();
+            
+            // Update seat counter with animation
+            if (seatInfoTop && seatCountTop && seatTotalTop) {
+                // Remove loading state
+                seatInfoTop.classList.remove('seat-loading');
                 
-                // Animate the numbers counting up
-                setTimeout(() => {
-                    seatCountTop.classList.add('number-count-up');
-                    seatTotalTop.classList.add('number-count-up');
-                    animateNumber(seatCountTop, total, 1500);
-                    animateNumber(seatTotalTop, quota, 1500);
-                }, 200);
-            } else {
-                seatInfoTop.classList.add('hidden');
+                if (quota > 0) {
+                    // Show the container immediately with animation
+                    seatInfoTop.classList.remove('hidden');
+                    seatInfoTop.classList.add('count-up');
+                    
+                    // Animate the numbers counting up
+                    setTimeout(() => {
+                        seatCountTop.classList.add('number-count-up');
+                        seatTotalTop.classList.add('number-count-up');
+                        animateNumber(seatCountTop, total, 1500);
+                        animateNumber(seatTotalTop, quota, 1500);
+                    }, 200);
+                } else if (total > 0) {
+                    // Show counter even if no quota is set (for display purposes)
+                    seatInfoTop.classList.remove('hidden');
+                    seatInfoTop.classList.add('count-up');
+                    
+                    setTimeout(() => {
+                        seatCountTop.classList.add('number-count-up');
+                        seatTotalTop.classList.add('number-count-up');
+                        animateNumber(seatCountTop, total, 1500);
+                        animateNumber(seatTotalTop, total, 1500); // Show total as both current and max
+                    }, 200);
+                } else {
+                    // Hide if no data available
+                    seatInfoTop.classList.add('hidden');
+                }
             }
-        }
-        
-        // Handle form visibility based on quota
-        if (quota > 0) {
-            if (total >= quota && form) {
-                form.classList.add('hidden');
-                const full = document.createElement('div');
-                full.className = 'mt-4 text-rose-300';
-                full.textContent = 'Sorry, sign-up quota is full.';
-                form.parentElement.appendChild(full);
-            } else if (form) {
-                form.classList.remove('hidden');
+            
+            // Handle form visibility based on quota
+            if (quota > 0) {
+                if (total >= quota && form) {
+                    form.classList.add('hidden');
+                    
+                    // Check if quota full message already exists
+                    let quotaFullMsg = document.getElementById('quotaFullMessage');
+                    if (!quotaFullMsg) {
+                        quotaFullMsg = document.createElement('div');
+                        quotaFullMsg.id = 'quotaFullMessage';
+                        quotaFullMsg.className = 'quota-full-message';
+                        quotaFullMsg.innerHTML = `
+                            <div class="quota-full-container">
+                                <div class="quota-full-icon">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                </div>
+                                <div class="quota-full-text">
+                                    <h3 class="quota-full-title">Registration Closed</h3>
+                                    <p class="quota-full-subtitle">Sorry, sign-up quota is full.</p>
+                                </div>
+                            </div>
+                        `;
+                        form.parentElement.appendChild(quotaFullMsg);
+                    }
+                } else if (form) {
+                    form.classList.remove('hidden');
+                    // Remove quota full message if it exists
+                    const quotaFullMsg = document.getElementById('quotaFullMessage');
+                    if (quotaFullMsg) {
+                        quotaFullMsg.remove();
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('Error updating seat info:', error);
+            // Retry up to 3 times with increasing delay
+            if (retryCount < 3) {
+                setTimeout(() => {
+                    updateSeatInfo(retryCount + 1);
+                }, (retryCount + 1) * 2000);
             }
         }
     }
@@ -270,7 +333,17 @@
         doc.save(`nstu_ticket_${(tId?.textContent||'').toString() || 'registration'}.pdf`);
     });
 
-    // Initial
+    // Initialize the app with better timing
+    // Wait for DOM to be fully loaded and Firebase to initialize
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateSeatInfo, 500); // Give Firebase time to initialize
+        });
+    } else {
+        setTimeout(updateSeatInfo, 500); // Give Firebase time to initialize
+    }
+    
+    // Also try to update immediately in case Firebase is already ready
     updateSeatInfo();
 })();
 

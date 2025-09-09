@@ -1,50 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NSTU Mechatronics Club Orientation - Registration</title>
     <meta name="description" content="Register for NSTU Mechatronics Club Orientation at IQAC, Thursday 2:00 PM">
+    
+    <!-- External Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="./assets/logo.png">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
     <style>
-        :root { --glow: 0 0 36px rgba(99,102,241,.28); }
-        html, body { height: 100%; }
-        body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-        .glass { position: relative; overflow: visible; backdrop-filter: blur(10px); background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)); border: 1px solid rgba(148,163,184,.18); }
-        .glass:before { content: ""; position: absolute; inset: -1px; padding: 1px; border-radius: 16px; background: linear-gradient(135deg, rgba(196,181,253,.35), rgba(147,197,253,.15)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-        .neon-ring { box-shadow: 0 0 0 1px rgba(99,102,241,.45), 0 0 22px rgba(99,102,241,.28), inset 0 0 18px rgba(99,102,241,.14); }
-        .glow:hover { box-shadow: var(--glow); }
-        .grad-text { background: linear-gradient(90deg, #c4b5fd, #f9a8d4, #93c5fd); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .grid-bg { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0); background-size: 22px 22px; }
-        .pulse-shadow { box-shadow: 0 0 0 0 rgba(99,102,241,.6); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99,102,241,.6);} 70% { box-shadow: 0 0 0 16px rgba(99,102,241,0);} 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0);} }
-        .icon-glow { box-shadow: 0 0 0 1px rgba(129,140,248,.5), 0 0 30px rgba(34,211,238,.25), inset 0 0 18px rgba(34,211,238,.15); }
-        .logo-glow { filter: drop-shadow(0 18px 48px rgba(99,102,241,.55)) drop-shadow(0 0 88px rgba(56,189,248,.48)) drop-shadow(0 0 128px rgba(147,197,253,.38)); animation: logoPulse 5.5s ease-in-out infinite; }
-        @keyframes logoPulse { 0% { filter: drop-shadow(0 14px 36px rgba(99,102,241,.45)) drop-shadow(0 0 72px rgba(56,189,248,.36)) drop-shadow(0 0 108px rgba(147,197,253,.30)); } 50% { filter: drop-shadow(0 22px 64px rgba(99,102,241,.65)) drop-shadow(0 0 120px rgba(56,189,248,.58)) drop-shadow(0 0 168px rgba(147,197,253,.46)); } 100% { filter: drop-shadow(0 14px 36px rgba(99,102,241,.45)) drop-shadow(0 0 72px rgba(56,189,248,.36)) drop-shadow(0 0 108px rgba(147,197,253,.30)); } }
-        .logo-wrap { position: relative; }
-        .logo-wrap:before { content: ""; position: absolute; inset: 50% auto auto 50%; translate: -50% -50%; width: clamp(14rem, 34vw, 26rem); height: clamp(14rem, 34vw, 26rem); border-radius: 9999px; background: radial-gradient(circle, rgba(56,189,248,.48), rgba(99,102,241,.26) 46%, transparent 66%); filter: blur(36px); z-index: -1; animation: auraFlow 6.5s ease-in-out infinite alternate; opacity: .95; }
-        .logo-reflect { -webkit-box-reflect: below -6px linear-gradient(transparent, rgba(2,6,23,.1) 30%, rgba(2,6,23,.55) 65%, rgba(2,6,23,.9)); }
-        .logo-wrap:after { content: ""; position: absolute; inset: 0; pointer-events: none; 
-            -webkit-mask-image: url('./assets/logo.png'); mask-image: url('./assets/logo.png');
-            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-            -webkit-mask-position: center; mask-position: center;
-            -webkit-mask-size: contain; mask-size: contain;
+        /* ===== CSS VARIABLES ===== */
+        :root { 
+            --glow: 0 0 36px rgba(99,102,241,.28); 
+        }
+        
+        /* ===== BASE STYLES ===== */
+        html, body { 
+            height: 100%; 
+        }
+        
+        body { 
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; 
+        }
+        /* ===== GLASS MORPHISM EFFECTS ===== */
+        .glass { 
+            position: relative; 
+            overflow: visible; 
+            backdrop-filter: blur(10px); 
+            background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)); 
+            border: 1px solid rgba(148,163,184,.18); 
+        }
+        
+        .glass:before { 
+            content: ""; 
+            position: absolute; 
+            inset: -1px; 
+            padding: 1px; 
+            border-radius: 16px; 
+            background: linear-gradient(135deg, rgba(196,181,253,.35), rgba(147,197,253,.15)); 
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none; 
+        }
+        
+        /* ===== NEON EFFECTS ===== */
+        .neon-ring { 
+            box-shadow: 0 0 0 1px rgba(99,102,241,.45), 0 0 22px rgba(99,102,241,.28), inset 0 0 18px rgba(99,102,241,.14); 
+        }
+        
+        .glow:hover { 
+            box-shadow: var(--glow); 
+        }
+        
+        .grad-text { 
+            background: linear-gradient(90deg, #c4b5fd, #f9a8d4, #93c5fd); 
+            -webkit-background-clip: text; 
+            background-clip: text; 
+            color: transparent; 
+        }
+        
+        /* ===== BACKGROUND PATTERNS ===== */
+        .grid-bg { 
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 0); 
+            background-size: 22px 22px; 
+        }
+        /* ===== ANIMATIONS ===== */
+        .pulse-shadow { 
+            box-shadow: 0 0 0 0 rgba(99,102,241,.6); 
+            animation: pulse 2s infinite; 
+        }
+        
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(99,102,241,.6);} 
+            70% { box-shadow: 0 0 0 16px rgba(99,102,241,0);} 
+            100% { box-shadow: 0 0 0 0 rgba(99,102,241,0);} 
+        }
+        
+        /* ===== ICON EFFECTS ===== */
+        .icon-glow { 
+            box-shadow: 0 0 0 1px rgba(129,140,248,.5), 0 0 30px rgba(34,211,238,.25), inset 0 0 18px rgba(34,211,238,.15); 
+        }
+        
+        /* ===== LOGO EFFECTS ===== */
+        .logo-glow { 
+            filter: drop-shadow(0 18px 48px rgba(99,102,241,.55)) drop-shadow(0 0 88px rgba(56,189,248,.48)) drop-shadow(0 0 128px rgba(147,197,253,.38)); 
+            animation: logoPulse 5.5s ease-in-out infinite; 
+        }
+        
+        @keyframes logoPulse { 
+            0% { 
+                filter: drop-shadow(0 14px 36px rgba(99,102,241,.45)) drop-shadow(0 0 72px rgba(56,189,248,.36)) drop-shadow(0 0 108px rgba(147,197,253,.30)); 
+            } 
+            50% { 
+                filter: drop-shadow(0 22px 64px rgba(99,102,241,.65)) drop-shadow(0 0 120px rgba(56,189,248,.58)) drop-shadow(0 0 168px rgba(147,197,253,.46)); 
+            } 
+            100% { 
+                filter: drop-shadow(0 14px 36px rgba(99,102,241,.45)) drop-shadow(0 0 72px rgba(56,189,248,.36)) drop-shadow(0 0 108px rgba(147,197,253,.30)); 
+            } 
+        }
+        /* ===== LOGO WRAPPER ===== */
+        .logo-wrap { 
+            position: relative; 
+        }
+        
+        .logo-wrap:before { 
+            content: ""; 
+            position: absolute; 
+            inset: 50% auto auto 50%; 
+            translate: -50% -50%; 
+            width: clamp(14rem, 34vw, 26rem); 
+            height: clamp(14rem, 34vw, 26rem); 
+            border-radius: 9999px; 
+            background: radial-gradient(circle, rgba(56,189,248,.48), rgba(99,102,241,.26) 46%, transparent 66%); 
+            filter: blur(36px); 
+            z-index: -1; 
+            animation: auraFlow 6.5s ease-in-out infinite alternate; 
+            opacity: .95; 
+        }
+        
+        .logo-reflect { 
+            -webkit-box-reflect: below -6px linear-gradient(transparent, rgba(2,6,23,.1) 30%, rgba(2,6,23,.55) 65%, rgba(2,6,23,.9)); 
+        }
+        
+        .logo-wrap:after { 
+            content: ""; 
+            position: absolute; 
+            inset: 0; 
+            pointer-events: none; 
+            -webkit-mask-image: url('./assets/logo.png'); 
+            mask-image: url('./assets/logo.png');
+            -webkit-mask-repeat: no-repeat; 
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center; 
+            mask-position: center;
+            -webkit-mask-size: contain; 
+            mask-size: contain;
             background-image: radial-gradient(50% 60% at 50% 100%, rgba(255,255,255,.18), transparent 70%), linear-gradient(115deg, transparent 46%, rgba(255,255,255,.82) 50%, transparent 54%);
             background-size: 100% 100%, 220% 100%;
             background-repeat: no-repeat, no-repeat;
             background-position: center, -120% 0;
-            mix-blend-mode: screen; opacity: .75; animation: logoSheen 2.6s linear infinite; }
-        @keyframes logoSheen { 60% { background-position: center, 140% 0; } 100% { background-position: center, 140% 0; } }
-        /* Logo entrance */
-        .logo-enter { opacity: 0; transform: translateY(8px) scale(.96); filter: blur(2px); animation: logoEnter .9s cubic-bezier(.2,.7,.1,1) .15s forwards; }
-        @keyframes logoEnter { to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+            mix-blend-mode: screen; 
+            opacity: .75; 
+            animation: logoSheen 2.6s linear infinite; 
+        }
         
-        /* Seat Counter Styles */
+        @keyframes logoSheen { 
+            60% { background-position: center, 140% 0; } 
+            100% { background-position: center, 140% 0; } 
+        }
+        /* ===== LOGO ENTRANCE ANIMATION ===== */
+        .logo-enter { 
+            opacity: 0; 
+            transform: translateY(8px) scale(.96); 
+            filter: blur(2px); 
+            animation: logoEnter .9s cubic-bezier(.2,.7,.1,1) .15s forwards; 
+        }
+        
+        @keyframes logoEnter { 
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+                filter: blur(0); 
+            } 
+        }
+        
+        /* ===== SEAT COUNTER STYLES ===== */
         .seat-counter { display: inline-flex; vertical-align: middle; }
+        
+        /* Loading animation for seat counter */
+        .seat-loading .seat-number,
+        .seat-loading .seat-total {
+            animation: seatLoading 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes seatLoading {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* ===== QUOTA FULL MESSAGE STYLES ===== */
+        .quota-full-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 2rem 0;
+            animation: quotaFullEntrance 0.8s ease-out forwards;
+        }
+        
+        .quota-full-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 3rem;
+            background: linear-gradient(135deg, 
+                rgba(239, 68, 68, 0.1), 
+                rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 8px 32px rgba(239, 68, 68, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quota-full-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            animation: quotaShine 3s ease-in-out infinite;
+        }
+        
+        .quota-full-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+            color: #ef4444;
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.5));
+            animation: quotaIconPulse 2s ease-in-out infinite;
+        }
+        
+        .quota-full-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .quota-full-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fca5a5;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 0 0 10px rgba(252, 165, 165, 0.5);
+            letter-spacing: 0.5px;
+        }
+        
+        .quota-full-subtitle {
+            font-size: 1rem;
+            color: #fecaca;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        @keyframes quotaFullEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes quotaShine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes quotaIconPulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.5));
+            }
+            50% { 
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8));
+            }
+        }
         .seat-glow { 
             position: relative; 
             padding: 1px 8px; 
@@ -230,35 +472,52 @@
             .grid-bg { background-size: 26px 26px; opacity: .9; }
         }
     </style>
+    
+    <!-- Tailwind Configuration -->
     <script>
-        tailwind.config = { theme: { extend: { colors: { primary: '#818cf8', secondary: '#06b6d4', accent: '#67e8f9' } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        primary: '#818cf8', 
+                        secondary: '#06b6d4', 
+                        accent: '#67e8f9' 
+                    } 
+                } 
+            } 
+        }
     </script>
 </head>
+
 <body class="min-h-full bg-slate-950 text-slate-100 grid-bg">
+    <!-- ===== BACKGROUND EFFECTS ===== -->
     <div class="bg-aurora"></div>
     <div class="absolute inset-0 -z-10 overflow-hidden">
         <div class="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl"></div>
         <div class="pointer-events-none absolute bottom-0 right-0 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl"></div>
     </div>
 
+    <!-- ===== HEADER SECTION ===== -->
     <header class="px-5 pt-0 max-w-3xl mx-auto">
         <div class="flex items-start justify-center gap-3">
             <a href="./index.html" class="inline-flex items-center justify-center logo-wrap">
                 <img src="./assets/logo.png" alt="NSTU Mechatronics Club" class="logo-brand md:h-28 w-auto logo-glow logo-reflect logo-enter">
             </a>
-            
         </div>
     </header>
 
 
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="px-5 pb-6 pt-0 md:pt-3 max-w-3xl mx-auto">
         <div class="glass rounded-2xl p-6 md:p-10 glow transition-shadow">
+            <!-- ===== TITLE SECTION ===== -->
             <div class="flex items-start md:items-center justify-start gap-4 flex-col md:flex-row">
                 <div class="w-full">
                     <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight neon-title neon-pulse">
                         NSTU Mechatronics Club, Orientation Program.
-                        <!-- Seat Counter -->
-                        <div id="seatInfoTop" class="inline-block ml-3">
+                        
+                        <!-- ===== SEAT COUNTER ===== -->
+                        <div id="seatInfoTop" class="inline-block ml-3 seat-loading">
                             <div class="seat-counter">
                                 <div class="seat-glow">
                                     <div class="seat-content">
@@ -266,9 +525,9 @@
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                         </svg>
                                         <span class="seat-text">
-                                            <span id="seatCountTop" class="seat-number">0</span>
+                                            <span id="seatCountTop" class="seat-number">--</span>
                                             <span class="seat-separator">/</span>
-                                            <span id="seatTotalTop" class="seat-total">0</span>
+                                            <span id="seatTotalTop" class="seat-total">--</span>
                                             <span class="seat-label">seats filled</span>
                                         </span>
                                     </div>
@@ -276,14 +535,49 @@
                             </div>
                         </div>
                     </h1>
+                    <!-- ===== COUNTDOWN TIMER ===== -->
                     <div id="countdownInline" class="mt-3 mb-2 w-full flex justify-center">
                         <div class="countdown">
-                            <div class="pill"><span class="flip"><span class="card"><span class="front" id="cdDaysInline">00</span><span class="back">00</span></span></span><div class="label">Days</div></div>
-                            <div class="pill"><span class="flip"><span class="card"><span class="front" id="cdHoursInline">00</span><span class="back">00</span></span></span><div class="label">Hours</div></div>
-                            <div class="pill"><span class="flip"><span class="card"><span class="front" id="cdMinsInline">00</span><span class="back">00</span></span></span><div class="label">Mins</div></div>
-                            <div class="pill"><span class="flip"><span class="card"><span class="front" id="cdSecsInline">00</span><span class="back">00</span></span></span><div class="label">Secs</div></div>
+                            <div class="pill">
+                                <span class="flip">
+                                    <span class="card">
+                                        <span class="front" id="cdDaysInline">00</span>
+                                        <span class="back">00</span>
+                                    </span>
+                                </span>
+                                <div class="label">Days</div>
+                            </div>
+                            <div class="pill">
+                                <span class="flip">
+                                    <span class="card">
+                                        <span class="front" id="cdHoursInline">00</span>
+                                        <span class="back">00</span>
+                                    </span>
+                                </span>
+                                <div class="label">Hours</div>
+                            </div>
+                            <div class="pill">
+                                <span class="flip">
+                                    <span class="card">
+                                        <span class="front" id="cdMinsInline">00</span>
+                                        <span class="back">00</span>
+                                    </span>
+                                </span>
+                                <div class="label">Mins</div>
+                            </div>
+                            <div class="pill">
+                                <span class="flip">
+                                    <span class="card">
+                                        <span class="front" id="cdSecsInline">00</span>
+                                        <span class="back">00</span>
+                                    </span>
+                                </span>
+                                <div class="label">Secs</div>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- ===== EVENT INFO CHIPS ===== -->
                     <div class="mt-3 md:mt-3 flex flex-wrap items-center gap-1.5">
                         <span class="neon-chip chip-cyan">
                             <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7Zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5Z"/></svg>
@@ -305,9 +599,12 @@
                 </div>
             </div>
 
+            <!-- ===== DIVIDER ===== -->
             <div class="divider my-2 md:my-3.5"></div>
 
+            <!-- ===== REGISTRATION FORM ===== -->
             <form id="registrationForm" class="mt-2 md:mt-5 grid grid-cols-1 gap-2.5">
+                <!-- ===== NAME FIELD ===== -->
                 <div>
                     <label for="name" class="block text-sm text-slate-300 mb-2">Full Name</label>
                     <input id="name" name="name" type="text"
@@ -315,6 +612,7 @@
                     <p data-error-for="name" class="mt-1 text-xs text-rose-400 hidden"></p>
                 </div>
 
+                <!-- ===== PHONE FIELD ===== -->
                 <div>
                     <label for="phone" class="block text-sm text-slate-300 mb-2">Phone</label>
                     <input id="phone" name="phone" type="tel" inputmode="numeric"
@@ -322,7 +620,9 @@
                     <p data-error-for="phone" class="mt-1 text-xs text-rose-400 hidden"></p>
                 </div>
 
+                <!-- ===== SESSION & DEPARTMENT FIELDS ===== -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- ===== SESSION FIELD ===== -->
                     <div>
                         <label for="session" class="block text-sm text-slate-300 mb-2">Session</label>
                         <select id="session" name="session" class="w-full rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-3 transition-all" required>
@@ -337,6 +637,8 @@
                         </select>
                         <p data-error-for="session" class="mt-1 text-xs text-rose-400 hidden"></p>
                     </div>
+                    
+                    <!-- ===== DEPARTMENT FIELD ===== -->
                     <div>
                         <label for="department" class="block text-sm text-slate-300 mb-2">Department</label>
                         <select id="department" name="department" class="w-full rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-3 transition-all" required>
@@ -380,18 +682,25 @@
                     </div>
                 </div>
 
+                <!-- ===== STUDENT ID FIELD ===== -->
                 <div>
-                    <label for="studentId" class="block text-sm text-slate-300 mb-2">Student ID <span class="text-rose-400">("batch20" for 20th batch)</span></label>
+                    <label for="studentId" class="block text-sm text-slate-300 mb-2">
+                        Student ID <span class="text-rose-400">("batch20" for 20th batch)</span>
+                    </label>
                     <input id="studentId" name="studentId" type="text" maxlength="11"
                            class="w-full rounded-xl bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 outline-none px-4 py-3 transition-all tracking-widest" required>
                     <p data-error-for="studentId" class="mt-1 text-xs text-rose-400 hidden"></p>
                 </div>
 
+                <!-- ===== SUBMIT BUTTON ===== -->
                 <button type="submit" class="neon-cta group mt-2 inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 font-semibold transition-transform duration-200">
                     <span class="label">Submit Registration</span>
-                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12h14M13 5l7 7-7 7"/>
+                    </svg>
                 </button>
 
+                <!-- ===== SUCCESS MESSAGE ===== -->
                 <p id="successMsg" class="hidden text-emerald-300 text-sm mt-2">Registration submitted! See your entry on the dashboard.</p>
             </form>
         </div>
@@ -399,6 +708,7 @@
         
     </main>
 
+    <!-- ===== EXTERNAL SCRIPTS ===== -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -406,7 +716,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
     <script src="./assets/app.js"></script>
-    <!-- Ticket Modal -->
+
+    <!-- ===== TICKET MODAL ===== -->
     <div id="ticketModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm">
         <div class="glass rounded-2xl p-6 w-[92%] max-w-md relative">
             <button id="closeTicket" class="absolute right-3 top-3 text-slate-400 hover:text-slate-200">✕</button>
@@ -429,6 +740,7 @@
             </div>
         </div>
     </div>
+    <!-- ===== LOADING OVERLAY ===== -->
     <div id="submitOverlay" class="submit-overlay">
         <div class="ring">
             <img src="./assets/logo.png" alt="NSTU MC Loading" />
