@@ -2,6 +2,45 @@
     const STORAGE_KEY = 'nstu_mec_orient_registrations'; // fallback local
     const COLLECTION = 'registrations';
     const META_DOC = 'meta/config';
+    
+    // Global popup functions
+    window.showErrorPopup = function(message) {
+        const popup = document.getElementById('errorPopup');
+        const messageEl = document.getElementById('errorMessage');
+        if (popup && messageEl) {
+            messageEl.textContent = message;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 5000);
+        }
+    };
+    
+    window.hideErrorPopup = function() {
+        const popup = document.getElementById('errorPopup');
+        if (popup) popup.classList.remove('show');
+    };
+    
+    window.showSuccessPopup = function(message) {
+        const popup = document.getElementById('successPopup');
+        const messageEl = document.getElementById('successMessage');
+        if (popup && messageEl) {
+            messageEl.textContent = message;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 4000);
+        }
+    };
+    
+    window.hideSuccessPopup = function() {
+        const popup = document.getElementById('successPopup');
+        if (popup) popup.classList.remove('show');
+    };
+    
+    // Hide loading fallback when page is ready
+    function hideLoadingFallback() {
+        const fallback = document.getElementById('loadingFallback');
+        if (fallback) {
+            setTimeout(() => fallback.classList.add('hidden'), 1000);
+        }
+    }
 
     function getThursdayLabel() {
         const now = new Date();
@@ -76,25 +115,40 @@
             p.textContent = message || '';
             p.classList.toggle('hidden', !message);
         }
+        
+        // Also show popup for critical errors
+        if (message && (name === 'studentId' || name === 'phone')) {
+            showErrorPopup(message);
+        }
     }
 
     function validate(values) {
         let ok = true;
+        let errorMessages = [];
+        
         // Name: letters, spaces, 2-50 chars
         if (!/^([A-Za-z]+\s?){2,50}$/.test(values.name.trim())) {
             ok = false; setError('name', 'Enter 2-50 letters/spaces.');
+            errorMessages.push('Name must be 2-50 letters and spaces only');
         } else setError('name');
 
         // Phone: 10-15 digits
         if (!/^\d{10,15}$/.test(values.phone)) {
             ok = false; setError('phone', 'Enter 10-15 digits.');
+            errorMessages.push('Phone must be 10-15 digits only');
         } else setError('phone');
 
         // Session required
-        if (!values.session) { ok = false; setError('session', 'Select a session.'); } else setError('session');
+        if (!values.session) { 
+            ok = false; setError('session', 'Select a session.'); 
+            errorMessages.push('Please select a session');
+        } else setError('session');
 
         // Department required, min 2 chars
-        if (!values.department || values.department.trim().length < 2) { ok = false; setError('department', 'Enter a department.'); } else setError('department');
+        if (!values.department || values.department.trim().length < 2) { 
+            ok = false; setError('department', 'Enter a department.'); 
+            errorMessages.push('Please select a department');
+        } else setError('department');
 
         // Student ID: must start with MUH|ASH|BFK|BBH|BKH, end with M or F, total 11
         // Exception: if "(batch20)" present AND session === '2024-25', accept
@@ -103,7 +157,13 @@
         const idPattern = /^(MUH|ASH|BFK|BBH|BKH)[A-Z0-9]{7}[MF]$/;
         if (!(isBatch20Exception || idPattern.test(upperId))) {
             ok = false; setError('studentId', 'ID must start MUH/ASH/BFK/BBH/BKH, end with M or F (11 chars).');
+            errorMessages.push('Student ID must start with MUH/ASH/BFK/BBH/BKH and end with M or F (11 characters total)');
         } else setError('studentId');
+        
+        // Show combined error popup if validation fails
+        if (!ok && errorMessages.length > 0) {
+            showErrorPopup(errorMessages.join('. ') + '.');
+        }
 
         return ok;
     }
@@ -158,13 +218,16 @@
             timestamp: new Date().toISOString()
         };
 
-        if (!validate(values)) return;
+        if (!validate(values)) {
+            overlay?.classList.remove('show');
+            return;
+        }
 
         try {
             // Check quota
             const { total, quota } = await getDbCounts();
             if (quota > 0 && total >= quota) {
-                alert('Sorry, sign-up quota is full.');
+                showErrorPopup('Sorry, sign-up quota is full. Please try again later.');
                 await updateSeatInfo();
                 overlay?.classList.remove('show');
                 return;
@@ -181,18 +244,24 @@
                 .limit(1)
                 .get();
             if (!dupQuery.empty || !dupPhone.empty) {
-                alert('Duplicate entry: Phone or Student ID already registered.');
+                showErrorPopup('Duplicate entry: Phone number or Student ID already registered for this session.');
                 overlay?.classList.remove('show');
                 return;
             }
 
             await db.collection(COLLECTION).add({ ...values, studentId_upper: values.studentId.toUpperCase() });
         } catch (err) {
+            console.error('Registration error:', err);
             // Fallback to local storage on error
             const list = readRegistrationsLocal();
-            if (hasDuplicate(list, values)) { alert('Duplicate entry: Phone or Student ID already registered.'); overlay?.classList.remove('show'); return; }
+            if (hasDuplicate(list, values)) { 
+                showErrorPopup('Duplicate entry: Phone number or Student ID already registered.'); 
+                overlay?.classList.remove('show'); 
+                return; 
+            }
             list.push(values);
             writeRegistrationsLocal(list);
+            showSuccessPopup('Registration saved locally (offline mode). Your data will sync when connection is restored.');
         }
 
         successMsg?.classList.remove('hidden');
@@ -237,8 +306,54 @@
         doc.save(`nstu_ticket_${(tId?.textContent||'').toString() || 'registration'}.pdf`);
     });
 
-    // Initial
-    updateSeatInfo();
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        hideLoadingFallback();
+        updateSeatInfo();
+        
+        // Add form field validation on blur
+        const formFields = form?.querySelectorAll('input, select');
+        formFields?.forEach(field => {
+            field.addEventListener('blur', function() {
+                const formData = new FormData(form);
+                const values = {
+                    name: String(formData.get('name') || '').trim(),
+                    phone: String(formData.get('phone') || '').replace(/\D/g, ''),
+                    session: String(formData.get('session') || ''),
+                    department: String(formData.get('department') || '').trim(),
+                    studentId: String(formData.get('studentId') || '').trim()
+                };
+                
+                // Validate only the current field
+                const fieldName = this.name;
+                if (fieldName === 'name' && !/^([A-Za-z]+\s?){2,50}$/.test(values.name)) {
+                    setError('name', 'Enter 2-50 letters/spaces.');
+                } else if (fieldName === 'phone' && !/^\d{10,15}$/.test(values.phone)) {
+                    setError('phone', 'Enter 10-15 digits.');
+                } else if (fieldName === 'studentId') {
+                    const upperId = String(values.studentId || '').toUpperCase();
+                    const isBatch20Exception = /\(BATCH20\)/i.test(values.studentId) && values.session === '2024-25';
+                    const idPattern = /^(MUH|ASH|BFK|BBH|BKH)[A-Z0-9]{7}[MF]$/;
+                    if (!(isBatch20Exception || idPattern.test(upperId))) {
+                        setError('studentId', 'ID must start MUH/ASH/BFK/BBH/BKH, end with M or F (11 chars).');
+                    } else {
+                        setError('studentId');
+                    }
+                } else {
+                    setError(fieldName);
+                }
+            });
+        });
+    });
+    
+    // Fallback initialization if DOMContentLoaded already fired
+    if (document.readyState === 'loading') {
+        // DOM is still loading, event listener will handle it
+    } else {
+        // DOM is already loaded
+        hideLoadingFallback();
+        updateSeatInfo();
+    }
 })();
 
 

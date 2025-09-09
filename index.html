@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="./assets/logo.png" as="image">
+    <link rel="preload" href="./assets/firebase.js" as="script">
+    <link rel="preload" href="./assets/app.js" as="script">
     <style>
         :root { --glow: 0 0 36px rgba(99,102,241,.28); }
         html, body { height: 100%; }
@@ -45,6 +49,30 @@
         /* Submit overlay */
         .submit-overlay { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; background: rgba(2,6,23,.72); backdrop-filter: blur(4px); }
         .submit-overlay.show { display: flex; }
+        
+        /* Error popup */
+        .error-popup { position: fixed; top: 20px; right: 20px; z-index: 70; max-width: 400px; background: linear-gradient(135deg, rgba(239,68,68,.95), rgba(185,28,28,.95)); border: 1px solid rgba(248,113,113,.5); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(239,68,68,.3), 0 0 20px rgba(185,28,28,.2); backdrop-filter: blur(10px); transform: translateX(100%); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .error-popup.show { transform: translateX(0); opacity: 1; }
+        .error-popup .error-icon { width: 24px; height: 24px; color: #fef2f2; }
+        .error-popup .error-title { font-weight: 600; color: #fef2f2; margin-bottom: 4px; }
+        .error-popup .error-message { color: #fecaca; font-size: 14px; line-height: 1.4; }
+        .error-popup .error-close { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #fecaca; cursor: pointer; padding: 4px; border-radius: 4px; transition: background-color 0.2s; }
+        .error-popup .error-close:hover { background: rgba(255,255,255,.1); }
+        
+        /* Success popup */
+        .success-popup { position: fixed; top: 20px; right: 20px; z-index: 70; max-width: 400px; background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(21,128,61,.95)); border: 1px solid rgba(74,222,128,.5); border-radius: 12px; padding: 16px; box-shadow: 0 10px 30px rgba(34,197,94,.3), 0 0 20px rgba(21,128,61,.2); backdrop-filter: blur(10px); transform: translateX(100%); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .success-popup.show { transform: translateX(0); opacity: 1; }
+        .success-popup .success-icon { width: 24px; height: 24px; color: #f0fdf4; }
+        .success-popup .success-title { font-weight: 600; color: #f0fdf4; margin-bottom: 4px; }
+        .success-popup .success-message { color: #bbf7d0; font-size: 14px; line-height: 1.4; }
+        .success-popup .success-close { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #bbf7d0; cursor: pointer; padding: 4px; border-radius: 4px; transition: background-color 0.2s; }
+        .success-popup .success-close:hover { background: rgba(255,255,255,.1); }
+        
+        /* Loading fallback */
+        .loading-fallback { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(2,6,23,.9); backdrop-filter: blur(4px); }
+        .loading-fallback.hidden { display: none; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(99,102,241,.3); border-top: 3px solid #6366f1; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .ring { position: relative; width: 120px; height: 120px; border-radius: 9999px; box-shadow: inset 0 0 28px rgba(56,189,248,.35), 0 0 48px rgba(99,102,241,.35); }
         .ring:before { content: ""; position: absolute; inset: -8px; border-radius: inherit; background: conic-gradient(from 0deg, rgba(56,189,248,.0), rgba(56,189,248,.65), rgba(147,197,253,.0)); filter: blur(10px); animation: spinGlow 1.2s linear infinite; }
         .ring img { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); height: 64px; width: auto; filter: drop-shadow(0 0 24px rgba(56,189,248,.55)); }
@@ -125,6 +153,32 @@
             .neon-cta:before { animation: none; filter: blur(24px); opacity: .6; }
             .neon-cta .label { text-shadow: 0 0 8px rgba(56,189,248,.45); }
             .grid-bg { background-size: 26px 26px; opacity: .9; }
+            .error-popup, .success-popup { right: 10px; left: 10px; max-width: none; }
+        }
+        
+        /* Ultra lightweight mode for very low-end devices */
+        @media (max-width: 360px) {
+            .logo-brand { height: 6rem !important; }
+            .neon-chip { font-size: .75rem; padding: .3rem .6rem; }
+            .glass { padding: 1rem !important; }
+            .neon-title { font-size: 1.5rem !important; }
+            .countdown .pill { min-width: 2.5ch; padding: .15rem .4rem; font-size: .8rem; }
+            .neon-cta { padding: .75rem 1.5rem !important; font-size: .9rem; }
+        }
+        
+        /* Performance optimizations */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+        
+        /* Hardware acceleration for better performance */
+        .logo-glow, .neon-cta, .neon-chip, .countdown .pill { transform: translateZ(0); will-change: transform; }
+        
+        /* Fallback for devices without backdrop-filter support */
+        @supports not (backdrop-filter: blur(10px)) {
+            .glass { background: rgba(15,23,42,.85); }
+            .error-popup, .success-popup { background: rgba(239,68,68,.9); }
+            .success-popup { background: rgba(34,197,94,.9); }
         }
     </style>
     <script>
@@ -306,6 +360,42 @@
             </div>
         </div>
     </div>
+    <!-- Loading fallback for slow connections -->
+    <div id="loadingFallback" class="loading-fallback">
+        <div class="text-center">
+            <div class="loading-spinner mx-auto mb-4"></div>
+            <p class="text-slate-300">Loading registration form...</p>
+        </div>
+    </div>
+    
+    <!-- Error popup -->
+    <div id="errorPopup" class="error-popup">
+        <button class="error-close" onclick="hideErrorPopup()">×</button>
+        <div class="flex items-start gap-3">
+            <svg class="error-icon flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="flex-1">
+                <div class="error-title">Validation Error</div>
+                <div class="error-message" id="errorMessage">Please check your input and try again.</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success popup -->
+    <div id="successPopup" class="success-popup">
+        <button class="success-close" onclick="hideSuccessPopup()">×</button>
+        <div class="flex items-start gap-3">
+            <svg class="success-icon flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <div class="flex-1">
+                <div class="success-title">Registration Successful!</div>
+                <div class="success-message" id="successMessage">Your registration has been submitted successfully.</div>
+            </div>
+        </div>
+    </div>
+    
     <div id="submitOverlay" class="submit-overlay">
         <div class="ring">
             <img src="./assets/logo.png" alt="NSTU MC Loading" />
