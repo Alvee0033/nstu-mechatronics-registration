@@ -214,7 +214,7 @@
             // Helper to generate valid student IDs and distinct phones
             const prefixes = ['MUH','ASH','BFK','BBH','BKH','NFH'];
             const session = '2024-25';
-            const department = 'Department of Software Engineering';
+            const department = 'Department of Information and Communication Engineering';
             const now = Date.now();
 
             const batch = db.batch();
