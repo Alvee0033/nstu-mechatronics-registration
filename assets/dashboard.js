@@ -148,6 +148,7 @@
     const saveQuota = document.getElementById('saveQuota');
     const saveQuotaText = document.getElementById('saveQuotaText');
     const saveQuotaSpinner = document.getElementById('saveQuotaSpinner');
+    const seedBtn = document.getElementById('seedBtn');
     async function loadQuota() {
         try {
             const snap = await db.doc(META_DOC).get();
@@ -164,6 +165,97 @@
         saveQuotaSpinner?.classList.add('hidden');
         saveQuotaText && (saveQuotaText.textContent = 'Save');
         await render();
+    });
+
+    // Seed utility (admin-only via login overlay)
+    seedBtn?.addEventListener('click', async () => {
+        const overlay = document.getElementById('dashOverlay');
+        const otext = document.getElementById('dashOverlayText');
+        try {
+            const confirmSeed = confirm('Seed 30 names into Firestore and set quota to close registration?');
+            if (!confirmSeed) return;
+            otext && (otext.textContent = 'Seeding registrations...');
+            overlay?.classList.remove('hidden');
+            overlay?.classList.add('flex');
+
+            const names = [
+                'Harith',
+                'maowa',
+                'Rokeya',
+                'Jamin',
+                'rashedul',
+                'Ragib',
+                'Rifat',
+                'Md.Nazmul Hosen',
+                'Nafija Marjan',
+                'Fahmida Tabassum Mim',
+                'Md. Shahnawaz',
+                'Susmita Kuri',
+                'Nahida Akter',
+                'Nadia Sultana',
+                'Monjurul Islam',
+                'Akshoy Dhar',
+                'Dip',
+                'Jahedul Islam',
+                'Tahmidur Rahman',
+                'Masud Bin Ilias',
+                'Abu yusuf',
+                'kabita',
+                'Fahad',
+                'Zihad',
+                'Ankon Mojumder',
+                'MD Najmul Hossen',
+                'Supti Paul',
+                'Humayun azad',
+                'Faria',
+                'Dip'
+            ];
+
+            // Helper to generate valid student IDs and distinct phones
+            const prefixes = ['MUH','ASH','BFK','BBH','BKH','NFH'];
+            const session = '2024-25';
+            const department = 'Department of Software Engineering';
+            const now = Date.now();
+
+            const batch = db.batch();
+            let phoneBase = 1700000000 + Math.floor(Math.random() * 100000); // Bangladeshi-like 10-digit
+
+            names.forEach((name, idx) => {
+                const phone = String(phoneBase + idx);
+                const prefix = prefixes[idx % prefixes.length];
+                const middle = Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
+                const suffix = idx % 2 === 0 ? 'M' : 'F';
+                const studentId = `${prefix}${middle}${suffix}`;
+                const doc = {
+                    name,
+                    phone,
+                    session,
+                    department,
+                    studentId,
+                    studentId_upper: studentId.toUpperCase(),
+                    timestamp: new Date(now + idx * 1000).toISOString()
+                };
+                const ref = db.collection(COLLECTION).doc();
+                batch.set(ref, doc);
+            });
+
+            await batch.commit();
+
+            // After seeding, set quota to total to close registration
+            const regsSnap = await db.collection(COLLECTION).get();
+            const total = regsSnap.size;
+            await db.doc(META_DOC).set({ quota: total }, { merge: true });
+
+            await loadQuota();
+            await render();
+        } catch (e) {
+            console.error('Seeding failed:', e);
+            alert('Seeding failed. See console for details.');
+        } finally {
+            overlay?.classList.add('hidden');
+            overlay?.classList.remove('flex');
+            otext && (otext.textContent = 'Processing...');
+        }
     });
 
     tryAutoLogin();
